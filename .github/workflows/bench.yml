@@ -1,0 +1,26 @@
+name: benchmark
+on:
+  push:
+    branches:
+      - master
+jobs:
+  bench:
+    name: benchmark
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+      - name: run benchmark
+        run: |
+          cd bench
+          node bench.js | tee output.txt
+      - name: store result
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          tool: 'benchmarkjs'
+          output-file-path: bench/output.txt
+          # github-token: ${{ secrets.GITHUB_TOKEN }}
+          # auto-push: true
+          # alert-threshold: '200%'
+          # comment-on-alert: true
+          # fail-on-alert: true

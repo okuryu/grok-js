@@ -49,6 +49,7 @@
     "universalify": "^0.2.0"
   },
   "devDependencies": {
+    "benchmark": "^2.1.4",
     "chai": "^4.2.0",
     "husky": "^4.2.3",
     "mocha": "^8.1.1",
