@@ -45,6 +45,7 @@
   "dependencies": {
     "async": "^3.0.1",
     "debug": "^4.1.1",
+    "onigasm": "^2.2.5",
     "universalify": "^0.2.0"
   },
   "devDependencies": {
@@ -52,7 +53,6 @@
     "husky": "^4.2.3",
     "mocha": "^8.1.1",
     "nyc": "^15.0.0",
-    "onigasm": "^2.2.5",
     "oniguruma": "^7.2.0",
     "semistandard": "^14.0.0"
   },
