@@ -11,6 +11,8 @@ export class GrokCollection {
   count(): number;
 }
 
+export function init(): Promise<void>;
+
 export function loadDefault(loadModulesOrCallback?: string[] | string | { (err: any, collection: GrokCollection): any }, callback?: { (err: any, collection: GrokCollection): any }): any;
 
 export function loadDefaultSync(loadModules?: string[] | string): GrokCollection;
