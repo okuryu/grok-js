@@ -1,6 +1,6 @@
 {
   "name": "@okuryu/grok-js",
-  "version": "3.4.0",
+  "version": "4.0.0-alpha.0",
   "description": "Regular expression template library inspired by logstash grok filter module",
   "repository": "https://github.com/okuryu/grok-js.git",
   "bugs": {
