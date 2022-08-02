@@ -1,11 +1,6 @@
 # grok-js
-> Fork of https://github.com/Beh01der/node-grok
 
-[![npm version](https://img.shields.io/npm/v/grok-js.svg)](https://npmjs.com/grok-js)
-[![Build Status](https://img.shields.io/travis/honzahommer/grok-js.svg?branch=master)](https://travis-ci.org/honzahommer/grok-js)
-[![npm downloads](https://img.shields.io/npm/dm/grok-js.svg)](https://npmjs.com/grok-js)
-[![License](https://img.shields.io/npm/l/grok-js.svg)](https://github.com/honzahommer/grok-js/blob/master/LICENSE)
-[![Greenkeeper badge](https://badges.greenkeeper.io/honzahommer/grok-js.svg)](https://greenkeeper.io/)
+> Fork of https://github.com/Beh01der/node-grok
 
 This library is inspired by logstash grok filter but it's not a port of it.
 
@@ -14,15 +9,30 @@ More details about usage and implementation here https://memz.co/parsing-log-fil
 This is a templating library that helps reusing existing regular expressions and constructing new, more complex one. The primary goal was to help parsing and transforming plain text logs into JSON objects (one line => one object) based on provided template. 
 
 ## Install
-Install locally: `npm install grok-js`.
+
+```
+npm install @okuryu/grok-js
+```
+
+By default, grok-js runs using WebAssembly-based [onigasm](https://github.com/zikaari/onigasm). If you have problems with onigasm and want to use [oniguruma](https://github.com/atom/node-oniguruma) instead of onigasm, install oniguruma as follows.
+
+```
+npm install @okuryu/grok-js oniguruma
+```
 
 ## Quick start
+
 Following simple snippet
+
 ```javascript
+import grok from'@okuryu/grok-js';
+
 const p = '%{IP:client} \\[%{TIMESTAMP_ISO8601:timestamp}\\] "%{WORD:method} %{URIHOST:site}%{URIPATHPARAM:url}" %{INT:code} %{INT:request} %{INT:response} - %{NUMBER:took} \\[%{DATA:cache}\\] "%{DATA:mtag}" "%{DATA:agent}"';
 const str = '203.35.135.165 [2016-03-15T12:42:04+11:00] "GET memz.co/cloud/" 304 962 0 - 0.003 [MISS] "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36"';
 
-require('grok-js').loadDefault((err, patterns) => {
+await grok.init();
+
+grok.loadDefault((err, patterns) => {
   if (err) {
     console.error(err);
     return;
@@ -40,11 +50,15 @@ require('grok-js').loadDefault((err, patterns) => {
   });
 });
 ```
+
 will transform string
+
 ```
 203.35.135.165 [2016-03-15T12:42:04+11:00] "GET memz.co/cloud/" 304 962 0 - 0.003 [MISS] "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36"
 ```
+
 into object
+
 ```json
 { 
   "client": "203.35.135.165",
@@ -63,12 +77,17 @@ into object
 ```
 
 ## Synchronous version of code
+
 ```javascript
+import grok from '@okuryu/grok-js';
+
 const p = '%{IP:client} \\[%{TIMESTAMP_ISO8601:timestamp}\\] "%{WORD:method} %{URIHOST:site}%{URIPATHPARAM:url}" %{INT:code} %{INT:request} %{INT:response} - %{NUMBER:took} \\[%{DATA:cache}\\] "%{DATA:mtag}" "%{DATA:agent}"';
 const str = '203.35.135.165 [2016-03-15T12:42:04+11:00] "GET memz.co/cloud/" 304 962 0 - 0.003 [MISS] "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36"';
 
+await grok.init();
+
 try {
-  const patterns = require('grok-js').loadDefaultSync();
+  const patterns = grok.loadDefaultSync();
   const pattern = patterns.createPattern(p);
 
   console.log(pattern.parseSync(str));
@@ -78,12 +97,18 @@ try {
 ```
 
 ## Promises
+
 Experimental
+
 ```javascript
+import grok from'@okuryu/grok-js';
+
 const p = '%{IP:client} \\[%{TIMESTAMP_ISO8601:timestamp}\\] "%{WORD:method} %{URIHOST:site}%{URIPATHPARAM:url}" %{INT:code} %{INT:request} %{INT:response} - %{NUMBER:took} \\[%{DATA:cache}\\] "%{DATA:mtag}" "%{DATA:agent}"';
 const str = '203.35.135.165 [2016-03-15T12:42:04+11:00] "GET memz.co/cloud/" 304 962 0 - 0.003 [MISS] "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36"';
 
-require('grok-js').loadDefault().then(patterns => {
+await grok.init();
+
+grok.loadDefault().then(patterns => {
   return patterns.createPattern(p).parse(str);
 }).then(obj => {
   console.log(obj);
@@ -93,6 +118,9 @@ require('grok-js').loadDefault().then(patterns => {
 ```
 
 ## API
+
+* **init()** - Load the WebAssembly file. This must be called at the beginning of the application.
+
 * **loadDefault([loadModules,] callback)** - creates new pattern collection including all built-in patterns from `./patterns` folder. By providing *loadModules* parameter you can limit number of loaded patterns: `loadDefault(['grok-patterns'] ,...);`. Callback receives *patterns* collection filled in with default templates: `function(err, patterns)`.
 
 * **loadDefaultSync([loadModules])** - creates new default pattern collection and returns it `GrokCollection`.
@@ -114,6 +142,7 @@ require('grok-js').loadDefault().then(patterns => {
 Find out more about grok-js https://memz.co/parsing-log-files-node-js-regex-grok/ 
 
 ## License 
+
 **ISC License (ISC)**
 
 Copyright (c) 2019, Andrey Chausenko <andrey.chausenko@gmail.com>
